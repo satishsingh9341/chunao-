@@ -1,32 +1,36 @@
 steps:
   # 1. Install & Build Frontend
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
     dir: 'frontend'
+    entrypoint: 'npm'
     args: ['install']
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
     dir: 'frontend'
+    entrypoint: 'npm'
     args: ['run', 'build']
 
   # 2. Install & Test Backend
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
     dir: 'backend'
+    entrypoint: 'npm'
     args: ['install']
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
     dir: 'backend'
+    entrypoint: 'npm'
     env: ['NODE_ENV=test']
     args: ['test', '--passWithNoTests']
 
   # 3. Build Docker Images
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$COMMIT_SHA', './frontend']
+    args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$BUILD_ID', './frontend']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/chunao-backend:$COMMIT_SHA', './backend']
+    args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/chunao-backend:$BUILD_ID', './backend']
 
   # 4. Push Docker Images
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$COMMIT_SHA']
+    args: ['push', 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$BUILD_ID']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'asia.gcr.io/$PROJECT_ID/chunao-backend:$COMMIT_SHA']
+    args: ['push', 'asia.gcr.io/$PROJECT_ID/chunao-backend:$BUILD_ID']
 
   # 5. Deploy Backend to Cloud Run (asia-south1)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -35,11 +39,11 @@ steps:
       - run
       - deploy
       - chunao-saathi-backend
-      - --image=asia.gcr.io/$PROJECT_ID/chunao-backend:$COMMIT_SHA
+      - --image=asia.gcr.io/$PROJECT_ID/chunao-backend:$BUILD_ID
       - --region=asia-south1
       - --platform=managed
       - --allow-unauthenticated
-      - --set-env-vars=FIREBASE_PROJECT_ID=$PROJECT_ID,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,NODE_ENV=production
+      - --set-env-vars=FIREBASE_PROJECT_ID=$PROJECT_ID,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,NODE_ENV=production,GCS_BUCKET=chunao-saathi-storage-2026
       - --memory=512Mi
 
   # 6. Deploy Frontend to Firebase Hosting
@@ -58,7 +62,7 @@ availableSecrets:
       env: 'FIREBASE_TOKEN'
 
 images:
-  - 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$COMMIT_SHA'
-  - 'asia.gcr.io/$PROJECT_ID/chunao-backend:$COMMIT_SHA'
+  - 'asia.gcr.io/$PROJECT_ID/chunao-frontend:$BUILD_ID'
+  - 'asia.gcr.io/$PROJECT_ID/chunao-backend:$BUILD_ID'
 
 timeout: '1200s'

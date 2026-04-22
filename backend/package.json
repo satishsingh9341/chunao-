@@ -12,9 +12,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "extensionsToTreatAsEsm": [
-      ".js"
-    ],
+    "extensionsToTreatAsEsm": [],
     "transform": {},
     "coverageThreshold": {
       "global": {

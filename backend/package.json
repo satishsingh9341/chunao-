@@ -1,7 +1,7 @@
 {
   "name": "chunao-saathi-backend",
   "version": "1.0.0",
-  "description": "Chunao Saathi - Election Education App Backend",
+  "description": "Chunao Saathi - Election Education App Backend (Firebase Firestore)",
   "type": "module",
   "main": "server.js",
   "scripts": {
@@ -12,10 +12,14 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "extensionsToTreatAsEsm": [".js"],
+    "extensionsToTreatAsEsm": [
+      ".js"
+    ],
     "transform": {},
     "coverageThreshold": {
-      "global": { "lines": 60 }
+      "global": {
+        "lines": 60
+      }
     }
   },
   "dependencies": {
@@ -27,7 +31,6 @@
     "express-rate-limit": "^7.1.5",
     "firebase-admin": "^12.0.0",
     "helmet": "^7.1.0",
-    "pg": "^8.11.3",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -35,5 +38,7 @@
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4"
   },
-  "engines": { "node": ">=18.0.0" }
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
